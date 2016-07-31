@@ -29,7 +29,6 @@ import org.lwjgl.opengl.GL11
  * Created by cout970 on 31/07/2016.
  */
 
-
 fun main(args: Array<String>) {
 
     val builder = WindowBuilder()

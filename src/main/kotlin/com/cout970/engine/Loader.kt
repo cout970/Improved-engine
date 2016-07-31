@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL
 object Loader {
 
     fun init(){
+
         if (!GLFW.glfwInit()) {
             throw IllegalStateException("Unable to initialize GLFW")
         }
