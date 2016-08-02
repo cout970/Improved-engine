@@ -52,7 +52,7 @@ fun Vector2d.transform(op: (Double) -> Double) = Vector2d(op(x), op(y))
 
 fun Vector2d.copy() = Vector2d(this)
 
-fun Vector2d(x:Number, y: Number): Vector2d = Vector2d(x.toDouble(), y.toDouble())
+fun vec2Of(x:Number, y: Number) = Vector2d(x.toDouble(), y.toDouble())
 
 infix fun Vector2d.to(other: Vector2d): Box2 {
     val start = Vector2d(

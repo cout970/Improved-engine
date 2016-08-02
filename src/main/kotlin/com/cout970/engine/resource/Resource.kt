@@ -1,5 +1,6 @@
 package com.cout970.engine.resource
 
+import java.io.File
 import java.io.InputStream
 
 /**
@@ -10,4 +11,6 @@ data class Resource(
         val path: String
 ) {
     val inputStream: InputStream get() = domain.read(this)
+
+    fun toFile(): File = domain.getFile(this)
 }

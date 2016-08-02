@@ -1,5 +1,6 @@
 package com.cout970.engine.resource
 
+import java.io.File
 import java.io.InputStream
 
 /**
@@ -10,6 +11,8 @@ abstract class ResourceDomain {
     abstract val name: String
 
     abstract fun read(res: Resource): InputStream
+
+    abstract fun getFile(res: Resource): File
 
     override fun toString(): String{
         return "ResourceDomain(name='$name')"

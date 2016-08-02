@@ -1,5 +1,6 @@
 package com.cout970.engine.camera
 
+import com.cout970.engine.util.box.Box2
 import org.joml.Matrix4d
 
 /**
@@ -13,4 +14,8 @@ class PerspectiveCamera(
 ) : Camera(){
 
     override fun getProjection() = Matrix4d().apply { setPerspective(fov, aspect, nearPlane, farPlane) }
+
+    override fun updateViewport(viewport: Box2) {
+        aspect = viewport.size.x / viewport.size.y
+    }
 }

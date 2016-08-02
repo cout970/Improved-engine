@@ -15,8 +15,8 @@
    }
 }
 
- //java plugin
- apply plugin: 'java'
+//java plugin
+apply plugin: 'java'
  
 //kotlin plugin
 apply plugin: 'kotlin'

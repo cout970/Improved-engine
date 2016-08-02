@@ -46,4 +46,6 @@ interface IWindow : AutoCloseable {
     fun registerSizeChangeListener(listener: (Int, Int) -> Unit)
 
     fun registerWindowsFocusListener(listener: (Boolean) -> Unit)
+
+    fun setViewport(box: Box2)
 }

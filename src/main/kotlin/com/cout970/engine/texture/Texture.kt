@@ -1,7 +1,7 @@
 package com.cout970.engine.texture
 
 import com.cout970.engine.resource.Resource
-import com.cout970.engine.util.math.Vector2d
+import com.cout970.engine.util.math.vec2Of
 import org.joml.Vector2d
 import org.lwjgl.opengl.*
 
@@ -17,7 +17,7 @@ data class Texture(
 ) {
 
     val size: Vector2d
-        get() = Vector2d(width, height)
+        get() = vec2Of(width, height)
 
     var magFilter: Int = -1
         set(value) {

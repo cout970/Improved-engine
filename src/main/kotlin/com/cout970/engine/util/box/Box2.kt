@@ -5,7 +5,6 @@ import com.cout970.engine.util.math.minus
 import com.cout970.engine.util.math.plus
 import com.cout970.engine.util.math.times
 import org.joml.Vector2d
-import org.joml.Vector3d
 
 /**
  * Created by cout970 on 25/07/2016.
@@ -34,7 +33,7 @@ data class Box2(
     operator fun times(vec: Vector2d) = Box2(pos, size * vec)
     operator fun div(vec: Vector2d) = Box2(pos, size / vec)
 
-    operator fun contains(point: Vector3d): Boolean =
+    operator fun contains(point: Vector2d): Boolean =
             point.x > start.x && point.x < end.x &&
             point.y > start.y && point.y < end.y
 }

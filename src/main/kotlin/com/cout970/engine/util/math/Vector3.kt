@@ -9,6 +9,8 @@ import org.joml.Vector3d
  * Created by cout970 on 26/07/2016.
  */
 
+fun vec3Of(x:Number, y: Number, z: Number) = Vector3d(x.toDouble(), y.toDouble(), z.toDouble())
+
 fun Vector3d.toRadians() = Vector3d(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z))
 
 fun Vector3d.toDegrees() = Vector3d(Math.toDegrees(x), Math.toDegrees(y), Math.toDegrees(z))

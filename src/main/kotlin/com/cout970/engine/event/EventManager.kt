@@ -1,6 +1,8 @@
 package com.cout970.engine.event
 
+import com.cout970.engine.util.math.vec2Of
 import com.cout970.engine.window.IWindow
+import org.joml.Vector2d
 import org.lwjgl.glfw.*
 import org.lwjgl.glfw.GLFW.*
 
@@ -9,7 +11,7 @@ import org.lwjgl.glfw.GLFW.*
  */
 object EventManager {
 
-    private val listeners = mutableListOf<(Event)-> Unit>()
+    private val listeners = mutableListOf<(Event) -> Unit>()
     private val callbacks = mutableListOf<Callback>()
 
     fun isKeyPressed(window: IWindow, key: Int): Boolean {
@@ -20,11 +22,11 @@ object EventManager {
         callbacks.add(Callback(windowID))
     }
 
-    fun fireEvent(event: Event){
+    fun fireEvent(event: Event) {
         listeners.forEach { it.invoke(event) }
     }
 
-    fun registerListener(listener: (Event) -> Unit){
+    fun registerListener(listener: (Event) -> Unit) {
         listeners.add(listener)
     }
 
@@ -40,7 +42,7 @@ object EventManager {
         val scrollCallback: GLFWScrollCallback
         val cursorPosCallback: GLFWCursorPosCallback
 
-        init{
+        init {
             charCallback = GLFWCharCallback.create { window, code -> fireEvent(EventCharTyped(window, code.toChar(), code)) }
             keyCallback = GLFWKeyCallback.create { window, key, scancode, action, mods -> fireEvent(EventKeyUpdate(window, key, scancode, EnumAction.fromID(action), mods)) }
             mouseButtonCallback = GLFWMouseButtonCallback.create { window, button, action, mods -> fireEvent(EventMouseClick(window, button, EnumAction.fromID(action), mods)) }
@@ -61,5 +63,12 @@ object EventManager {
             scrollCallback.close()
             cursorPosCallback.close()
         }
+    }
+
+    fun getMousePos(window: IWindow): Vector2d {
+        val x = DoubleArray(1)
+        val y = DoubleArray(1)
+        glfwGetCursorPos(window.id, x, y)
+        return vec2Of(x[0], window.box.size.y -y[0])
     }
 }

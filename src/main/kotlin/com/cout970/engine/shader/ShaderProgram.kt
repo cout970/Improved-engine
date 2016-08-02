@@ -34,7 +34,12 @@ abstract class ShaderProgram : Closeable {
         GL20.glShaderSource(shader, code)
         GL20.glCompileShader(shader)
         if (GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            throw IllegalStateException("Error trying to compile shader: " + GL20.glGetShaderInfoLog(shader, 1000))
+            val name = if(type == GL20.GL_VERTEX_SHADER) "vertex" else "fragment"
+            val lines = code.split("\n")
+            for (i in 0 until lines.size){
+                println("$i | ${lines[i]}")
+            }
+            throw IllegalStateException("Error trying to compile "+ name  +" shader: " + GL20.glGetShaderInfoLog(shader, 1000))
         }
         return shader
     }
@@ -54,9 +59,19 @@ abstract class ShaderProgram : Closeable {
     protected fun createUniformVariable(name: String): UniformVariable {
         val id = GL20.glGetUniformLocation(programID, name)
         if (id == -1) {
-            EngineLogger.error("Error trying to get a uniform variable location for: %s", name)
+            EngineLogger.error("Error trying to get a uniform variable location for: "+ name)
         }
         val uni = UniformVariable(id)
+        variables.add(uni)
+        return uni
+    }
+
+    protected fun createUniformVariableArray(name: String): UniformVariable.UniformVariableArray {
+        val id = GL20.glGetUniformLocation(programID, name)
+        if (id == -1) {
+            EngineLogger.error("Error trying to get a uniform variable location for: "+ name)
+        }
+        val uni = UniformVariable.UniformVariableArray(id)
         variables.add(uni)
         return uni
     }

@@ -9,6 +9,8 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13
 import org.lwjgl.stb.STBImage
+import org.lwjgl.stb.STBTTBakedChar
+import org.lwjgl.stb.STBTruetype
 import java.io.InputStream
 
 /**
@@ -31,7 +33,14 @@ object TextureLoader {
         val byteDepth = BufferUtils.createIntBuffer(1)
 
         val bitmap = STBImage.stbi_load_from_memory(image, width, height, byteDepth, 3) ?: throw RuntimeException("Failed to load image at $res, Error: " + STBImage.stbi_failure_reason())
-        return TextureData(bitmap, Vector2d(width[0].toDouble(), height[0].toDouble()), byteDepth[0], res)
+        return TextureData(bitmap, Vector2d(width[0].toDouble(), height[0].toDouble()), if (byteDepth[0] == 3) GL_RGB else GL_RGBA, res)
+    }
+
+    fun loadTrueType(font: Resource, texSize: Int = 512, charHeight: Float = 8f, cdata: STBTTBakedChar.Buffer): TextureData {
+        val ttf = font.inputStream.toByteBuffer().apply { flip() }
+        val bitmap = BufferUtils.createByteBuffer(texSize * texSize)
+        STBTruetype.stbtt_BakeFontBitmap(ttf, charHeight, bitmap, texSize, texSize, 32, cdata)
+        return TextureData(bitmap, Vector2d(texSize.toDouble()), GL_ALPHA, font, GL_ALPHA)
     }
 
     fun uploadTexture1D(data: TextureData): Texture {
@@ -39,8 +48,7 @@ object TextureLoader {
         glEnable(TextureType.TEXTURE_1D.glID)
         glBindTexture(TextureType.TEXTURE_1D.glID, id)
 
-        val format = if (data.byteDepth == 3) GL_RGB else GL_RGBA
-        glTexImage1D(TextureType.TEXTURE_1D.glID, 0, format, data.size.xi, 0, GL_RGB, GL_UNSIGNED_BYTE, data.bitMap)
+        glTexImage1D(TextureType.TEXTURE_1D.glID, 0, data.format, data.size.xi, 0, data.outputFormat, GL_UNSIGNED_BYTE, data.bitMap)
         return Texture(id, data.size.xi, data.size.yi, data.resource, TextureType.TEXTURE_1D)
     }
 
@@ -49,8 +57,7 @@ object TextureLoader {
         glEnable(TextureType.TEXTURE_2D.glID)
         glBindTexture(TextureType.TEXTURE_2D.glID, id)
 
-        val format = if (data.byteDepth == 3) GL_RGB else GL_RGBA
-        glTexImage2D(TextureType.TEXTURE_2D.glID, 0, format, data.size.xi, data.size.yi, 0, GL_RGB, GL_UNSIGNED_BYTE, data.bitMap)
+        glTexImage2D(TextureType.TEXTURE_2D.glID, 0, data.format, data.size.xi, data.size.yi, 0, data.outputFormat, GL_UNSIGNED_BYTE, data.bitMap)
 
         return Texture(id, data.size.xi, data.size.yi, data.resource, TextureType.TEXTURE_2D)
     }
@@ -60,10 +67,9 @@ object TextureLoader {
         glEnable(TextureType.TEXTURE_CUBE.glID)
         glBindTexture(TextureType.TEXTURE_CUBE.glID, id)
 
-        val format = if (datas[0].byteDepth == 3) GL_RGB else GL_RGBA
         for (i in 0..5) {
             val data = datas[i]
-            glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, data.size.xi, data.size.yi, 0, GL_RGB, GL_UNSIGNED_BYTE, data.bitMap)
+            glTexImage2D(GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, data.format, data.size.xi, data.size.yi, 0, data.outputFormat, GL_UNSIGNED_BYTE, data.bitMap)
         }
 
         return Texture(id, datas[0].size.xi, datas[0].size.yi, datas[0].resource, TextureType.TEXTURE_CUBE)

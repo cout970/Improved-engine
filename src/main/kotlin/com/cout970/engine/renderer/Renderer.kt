@@ -6,7 +6,7 @@ import com.cout970.engine.tessellator.VAO
 /**
  * Created by cout970 on 30/07/2016.
  */
-class Renderer : IVaoRenderer {
+open class Renderer : IVaoRenderer {
 
     override fun render(vao: VAO) {
         vao.bind()

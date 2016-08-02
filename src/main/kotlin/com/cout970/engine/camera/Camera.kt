@@ -1,5 +1,6 @@
 package com.cout970.engine.camera
 
+import com.cout970.engine.util.box.Box2
 import com.cout970.engine.util.math.rotate
 import com.cout970.engine.util.math.toDegrees
 import com.cout970.engine.util.math.unaryMinus
@@ -22,4 +23,6 @@ abstract class Camera {
     override fun toString(): String{
         return "Camera(position=$position, rotations=${rotations.toDegrees()}, scale=$scale)"
     }
+
+    open fun updateViewport(viewport: Box2) {}
 }

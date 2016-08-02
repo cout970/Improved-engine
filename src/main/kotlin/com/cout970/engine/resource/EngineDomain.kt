@@ -1,5 +1,6 @@
 package com.cout970.engine.resource
 
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
 
@@ -15,4 +16,6 @@ object EngineDomain : ResourceDomain() {
                 getResourceAsStream("assets/${res.domain.name.toLowerCase()}/${res.path}")
                 ?: throw FileNotFoundException("resource: $res")
     }
+
+    override fun getFile(res: Resource): File = File("./assets/${res.domain.name.toLowerCase()}/${res.path}")
 }

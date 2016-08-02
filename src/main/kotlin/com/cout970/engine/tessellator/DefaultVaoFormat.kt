@@ -44,7 +44,7 @@ class DefaultVaoFormat : IVaoFormat {
     }
 
     override fun store(builder: VaoBuilder) {
-        builder.bindVertex(vertex = vertex.apply { limit(vertexCount) })
+        builder.bindVertex(vertex = vertex.apply { limit(vertexCount) }, elementsPerVertex = 3)
         builder.bindTexture(uv = texture.apply { limit(textureCount) })
         builder.bindNormals(normals = normal.apply { limit(normalCount) })
     }

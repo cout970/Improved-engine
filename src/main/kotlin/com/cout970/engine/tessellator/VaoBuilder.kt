@@ -39,11 +39,11 @@ class VaoBuilder(val drawMode: Int = GL11.GL_TRIANGLES, val longUse: Boolean = t
         return this
     }
 
-    fun bindVertex(slot: Int = 0, vertex: FloatBuffer): VaoBuilder {
+    fun bindVertex(slot: Int = 0, vertex: FloatBuffer, elementsPerVertex: Int): VaoBuilder {
         if (!useElements) {
-            vertexCount = vertex.remaining() / 3
+            vertexCount = vertex.remaining() / elementsPerVertex
         }
-        return bindAttrib(slot, vertex, 3)
+        return bindAttrib(slot, vertex, elementsPerVertex)
     }
 
     fun bindTexture(slot: Int = 1, uv: FloatBuffer) = bindAttrib(slot, uv, 2)
