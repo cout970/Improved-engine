@@ -6,7 +6,10 @@ import org.joml.Matrix4d
 /**
  * Created by cout970 on 30/07/2016.
  */
-class PerspectiveCamera(
+/**
+ * Implementation of Camera using a perspective projection
+ */
+open class PerspectiveCamera(
         var fov: Double,
         var aspect: Double,
         var nearPlane: Double,

@@ -6,11 +6,16 @@ import java.io.InputStream
 /**
  * Created by cout970 on 30/07/2016.
  */
+/**
+ * This class represents a resource loader the abstracts the resources of the program
+ */
 abstract class ResourceDomain {
 
     abstract val name: String
 
-    abstract fun read(res: Resource): InputStream
+    abstract fun exists(res: Resource): Boolean
+
+    abstract fun getInputStream(res: Resource): InputStream
 
     abstract fun getFile(res: Resource): File
 
@@ -30,4 +35,6 @@ abstract class ResourceDomain {
     override fun hashCode(): Int{
         return name.hashCode()
     }
+
+
 }

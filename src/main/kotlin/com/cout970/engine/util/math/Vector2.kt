@@ -1,68 +1,135 @@
 package com.cout970.engine.util.math
 
-import com.cout970.engine.util.box.Box2
-import org.joml.Vector2d
-import org.joml.Vector3d
+import java.io.Serializable
 
 /**
  * Created by cout970 on 26/07/2016.
  */
+/**
+ * A Immutable version of Vector2d
+ */
+data class Vector2(
+        val x: Double,
+        val y: Double
+) : Comparable<Vector2>, Serializable {
 
-fun Vector2d.toRadians() = Vector2d(Math.toRadians(x), Math.toRadians(y))
+    companion object {
+        val ORIGIN = vec2Of(0, 0)
+        val X_AXIS = vec2Of(1, 0)
+        val Y_AXIS = vec2Of(0, 1)
+    }
 
-fun Vector2d.toDegrees() = Vector2d(Math.toDegrees(x), Math.toDegrees(y))
+    //basic constructor
+    constructor(value: Double) : this(value, value)
 
-fun Vector2d.center() = Vector2d(x / 2, y / 2)
+    //float version
+    val xf: Float get() = x.toFloat()
+    val yf: Float get() = y.toFloat()
 
-fun Vector2d.xCenter() = Vector2d(x / 2, y)
-fun Vector2d.yCenter() = Vector2d(x, y / 2)
+    //int version
+    val xi: Int get() = x.toInt()
+    val yi: Int get() = y.toInt()
 
-fun Vector2d.centeredAt(x: Number, y: Number) = Vector2d(x.toDouble(), y.toDouble()) - center()
+    //basic math operations
+    operator fun plus(v: Number) = Vector2(x + v.toDouble(), y + v.toDouble())
+    operator fun minus(v: Number) = Vector2(x - v.toDouble(), y - v.toDouble())
+    operator fun times(v: Number) = Vector2(x * v.toDouble(), y * v.toDouble())
+    operator fun div(v: Number) = Vector2(x / v.toDouble(), y / v.toDouble())
 
-fun Vector2d.floor() = Vector2d(Math.floor(x), Math.floor(y))
-fun Vector2d.ceil() = Vector2d(Math.ceil(x), Math.ceil(y))
+    operator fun plus(v: Vector2) = Vector2(x + v.x, y + v.y)
+    operator fun minus(v: Vector2) = Vector2(x - v.x, y - v.y)
+    operator fun times(v: Vector2) = Vector2(x * v.x, y * v.y)
+    operator fun div(v: Vector2) = Vector2(x / v.x, y / v.y)
 
-infix fun Vector2d.centeredAt(pos: Vector2d) = pos - center()
+    //utility functions
+    override fun compareTo(other: Vector2): Int =
+            if (x < other.x) -1 else if (x > other.x) 1 else
+                if (y < other.y) -1 else if (y > other.y) 1 else 0
 
-infix fun Vector2d.to(n: Number) = Vector3d(x, y, n.toDouble())
+    /**
+     * Swaps the values x,y of this vector
+     */
+    fun swap() = Vector2(y, x)
 
-val Vector2d.xf: Float get() = x.toFloat()
-val Vector2d.yf: Float get() = y.toFloat()
+    /**
+     * Gets a vector with the same values as this but negated
+     */
+    operator fun unaryMinus() = Vector3(-x, -y)
 
-val Vector2d.xi: Int get() = x.toInt()
-val Vector2d.yi: Int get() = y.toInt()
+    /**
+     * Gets the length, magnitude or norm of this vector
+     */
+    fun length() = Math.sqrt(lengthSq())
 
-fun Vector2d.toPair(): Pair<Double, Double> = x to y
+    /**
+     * Gets the length, magnitude or norm squared of this vector
+     */
+    fun lengthSq() = x * x + y * y
 
-fun Vector2d.swap() = Vector2d(y, x)
+    /**
+     * Gets the normalized version of this vector
+     */
+    fun normalize() = this / length()
 
-operator fun Vector2d.plus(v: Number) = Vector2d(v.toDouble() + x, v.toDouble() + y)
-operator fun Vector2d.minus(v: Number) = Vector2d(x - v.toDouble(), y - v.toDouble())
-operator fun Vector2d.times(v: Number) = Vector2d(v.toDouble() * x, v.toDouble() * y)
-operator fun Vector2d.div(v: Number) = Vector2d(x / v.toDouble(), y / v.toDouble())
+    /**
+     * Gets the dot product of this vector and the other vector
+     */
+    fun dot(vec: Vector2) = x * vec.x + y * vec.y
 
-operator fun Vector2d.plus(v: Vector2d) = Vector2d(v.x + x, v.y + y)
-operator fun Vector2d.minus(v: Vector2d) = Vector2d(x - v.x, y - v.y)
-operator fun Vector2d.times(v: Vector2d) = Vector2d(v.x * x, v.y * y)
-operator fun Vector2d.div(v: Vector2d) = Vector2d(x / v.x, y / v.y)
+    /**
+     * Gets the angle in radians between the vectors
+     */
+    fun angle(vec: Vector2) = Math.acos(angleCos(vec))
 
-operator fun Vector2d.unaryMinus() = Vector2d(-x, -y)
+    /**
+     * Gets the cosine of the angle between this vector and the other vector
+     */
+    fun angleCos(vec: Vector2): Double {
+        var cos = dot(vec) / Math.sqrt(lengthSq() * vec.lengthSq())
+        cos = if (cos < 1) cos else 1.0
+        cos = if (cos > -1) cos else -1.0
+        return cos
+    }
 
-fun Vector2d.transform(op: (Double) -> Double) = Vector2d(op(x), op(y))
+    /**
+     * Applies the floor function to all the components of this vector
+     */
+    fun floor() = Vector2(Math.floor(x), Math.floor(y))
 
-fun Vector2d.copy() = Vector2d(this)
+    /**
+     * Applies the ceil function to all the components of this vector
+     */
+    fun ceil() = Vector2(Math.ceil(x), Math.ceil(y))
 
-fun vec2Of(x:Number, y: Number) = Vector2d(x.toDouble(), y.toDouble())
+    /**
+     * Gets the distance from this vector to the other vector
+     */
+    fun distance(other: Vector2) = (other - this).length()
 
-infix fun Vector2d.to(other: Vector2d): Box2 {
-    val start = Vector2d(
-            Math.min(this.x, other.x),
-            Math.min(this.y, other.y)
-    )
+    /**
+     * Gets the distance squared from this vector to the other vector
+     */
+    fun distanceSq(other: Vector2) = (other - this).lengthSq()
 
-    val end = Vector2d(
-            Math.max(this.x, other.x),
-            Math.max(this.y, other.y)
-    )
-    return Box2.of(start, end)
+    /**
+     * Applies a transformation to all the components of this vector
+     */
+    fun transform(op: (Double) -> Double) = Vector2(op(x), op(y))
+
+    /**
+     * Gets the middle point between ORIGIN and this vector
+     */
+    fun Vector2.center() = Vector2(x / 2, y / 2)
+
+    /**
+     * Gets the middle point between ORIGIN and this vector in the x axis,
+     * the y axis remain the same
+     */
+    fun Vector2.xCenter() = Vector2(x / 2, y)
+
+    /**
+     * Gets the middle point between ORIGIN and this vector in the y axis,
+     * the x axis remain the same
+     */
+    fun Vector2.yCenter() = Vector2(x, y / 2)
 }

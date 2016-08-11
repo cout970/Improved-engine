@@ -1,6 +1,6 @@
 package com.cout970.engine.shader
 
-import com.cout970.engine.util.EngineLogger
+import com.cout970.engine.log.EngineLogger
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import java.io.Closeable
@@ -8,7 +8,9 @@ import java.io.Closeable
 /**
  * Created by cout970 on 30/07/2016.
  */
-
+/**
+ * This class represents a shader program in OpenGL
+ */
 abstract class ShaderProgram : Closeable {
 
     val programID: Int
@@ -39,23 +41,40 @@ abstract class ShaderProgram : Closeable {
             for (i in 0 until lines.size){
                 println("$i | ${lines[i]}")
             }
+            System.out.flush()
             throw IllegalStateException("Error trying to compile "+ name  +" shader: " + GL20.glGetShaderInfoLog(shader, 1000))
         }
         return shader
     }
 
+    /**
+     * Starts the program, if other program is active, this will stop it
+     */
     fun start() = GL20.glUseProgram(programID)
 
+    /**
+     * End the shader program
+     */
     fun stop() = GL20.glUseProgram(0)
+
 
     abstract fun bindAttributes()
 
-    abstract fun loadUniformLocations()
-
+    /**
+     * Binds an attribute in the VAO to a 'in' variable in the shader
+     */
     protected fun bindAttribute(slot: Int, name: String) {
         GL20.glBindAttribLocation(programID, slot, name)
     }
 
+    /**
+     * Loads all the uniforms locations
+     */
+    abstract fun loadUniformLocations()
+
+    /**
+     * Creates an uniform variable representing a variable in the shader
+     */
     protected fun createUniformVariable(name: String): UniformVariable {
         val id = GL20.glGetUniformLocation(programID, name)
         if (id == -1) {
@@ -66,6 +85,9 @@ abstract class ShaderProgram : Closeable {
         return uni
     }
 
+    /**
+     * Creates an uniform variable representing an array
+     */
     protected fun createUniformVariableArray(name: String): UniformVariable.UniformVariableArray {
         val id = GL20.glGetUniformLocation(programID, name)
         if (id == -1) {
@@ -76,6 +98,9 @@ abstract class ShaderProgram : Closeable {
         return uni
     }
 
+    /**
+     * Detaches the shader program and deletes the shaders
+     */
     override fun close() {
         stop()
         GL20.glDetachShader(programID, vertexID)

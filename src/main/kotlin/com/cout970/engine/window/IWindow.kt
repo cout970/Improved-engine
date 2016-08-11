@@ -1,7 +1,7 @@
 package com.cout970.engine.window
 
 import com.cout970.engine.util.box.Box2
-import org.joml.Vector2d
+import com.cout970.engine.util.math.Vector2
 
 /**
  * Created by cout970 on 25/07/2016.
@@ -11,9 +11,9 @@ interface IWindow : AutoCloseable {
     val id: Long
     val box: Box2
 
-    fun setPos(pos: Vector2d)
+    fun setPos(pos: Vector2)
 
-    fun setSize(size: Vector2d)
+    fun setSize(size: Vector2)
 
     fun shouldClose(): Boolean
 

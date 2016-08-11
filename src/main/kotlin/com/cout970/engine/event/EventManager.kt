@@ -1,8 +1,5 @@
 package com.cout970.engine.event
 
-import com.cout970.engine.util.math.vec2Of
-import com.cout970.engine.window.IWindow
-import org.joml.Vector2d
 import org.lwjgl.glfw.*
 import org.lwjgl.glfw.GLFW.*
 
@@ -13,10 +10,6 @@ object EventManager {
 
     private val listeners = mutableListOf<(Event) -> Unit>()
     private val callbacks = mutableListOf<Callback>()
-
-    fun isKeyPressed(window: IWindow, key: Int): Boolean {
-        return glfwGetKey(window.id, key) == GLFW_PRESS
-    }
 
     fun registerWindow(windowID: Long) {
         callbacks.add(Callback(windowID))
@@ -44,8 +37,8 @@ object EventManager {
 
         init {
             charCallback = GLFWCharCallback.create { window, code -> fireEvent(EventCharTyped(window, code.toChar(), code)) }
-            keyCallback = GLFWKeyCallback.create { window, key, scancode, action, mods -> fireEvent(EventKeyUpdate(window, key, scancode, EnumAction.fromID(action), mods)) }
-            mouseButtonCallback = GLFWMouseButtonCallback.create { window, button, action, mods -> fireEvent(EventMouseClick(window, button, EnumAction.fromID(action), mods)) }
+            keyCallback = GLFWKeyCallback.create { window, key, scancode, action, mods -> fireEvent(EventKeyUpdate(window, key, scancode, EnumKeyState.fromID(action), mods)) }
+            mouseButtonCallback = GLFWMouseButtonCallback.create { window, button, action, mods -> fireEvent(EventMouseClick(window, button, EnumKeyState.fromID(action), mods)) }
             scrollCallback = GLFWScrollCallback.create { window, xoffset, yoffset -> fireEvent(EventMouseScroll(window, xoffset, yoffset)) }
             cursorPosCallback = GLFWCursorPosCallback.create { window, x, y -> fireEvent(EventCursorPos(window, x, y)) }
 
@@ -63,12 +56,5 @@ object EventManager {
             scrollCallback.close()
             cursorPosCallback.close()
         }
-    }
-
-    fun getMousePos(window: IWindow): Vector2d {
-        val x = DoubleArray(1)
-        val y = DoubleArray(1)
-        glfwGetCursorPos(window.id, x, y)
-        return vec2Of(x[0], window.box.size.y -y[0])
     }
 }

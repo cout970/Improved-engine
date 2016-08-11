@@ -11,11 +11,16 @@ object EngineDomain : ResourceDomain() {
 
     override val name: String = "Engine"
 
-    override fun read(res: Resource): InputStream {
-        return Thread.currentThread().contextClassLoader.
-                getResourceAsStream("assets/${res.domain.name.toLowerCase()}/${res.path}")
+    override fun exists(res: Resource): Boolean {
+        return ClassLoader.getSystemClassLoader().getResourceAsStream("assets/engine/${res.path}") == null
+    }
+
+    override fun getInputStream(res: Resource): InputStream {
+        return ClassLoader.getSystemClassLoader().getResourceAsStream("assets/engine/${res.path}")
                 ?: throw FileNotFoundException("resource: $res")
     }
 
-    override fun getFile(res: Resource): File = File("./assets/${res.domain.name.toLowerCase()}/${res.path}")
+    override fun getFile(res: Resource): File {
+        return File("./${res.path}")
+    }
 }

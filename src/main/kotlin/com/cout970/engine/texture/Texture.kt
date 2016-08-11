@@ -1,8 +1,7 @@
 package com.cout970.engine.texture
 
 import com.cout970.engine.resource.Resource
-import com.cout970.engine.util.math.vec2Of
-import org.joml.Vector2d
+import com.cout970.engine.util.math.Vector2
 import org.lwjgl.opengl.*
 
 /**
@@ -10,15 +9,10 @@ import org.lwjgl.opengl.*
  */
 data class Texture(
         val id: Int,
-        val width: Int,
-        val height: Int,
+        val size: Vector2,
         val resource: Resource,
         val type: TextureType
 ) {
-
-    val size: Vector2d
-        get() = vec2Of(width, height)
-
     var magFilter: Int = -1
         set(value) {
             GL11.glTexParameteri(type.glID, GL11.GL_TEXTURE_MAG_FILTER, value)
@@ -43,6 +37,8 @@ data class Texture(
     init {
         magFilter = GL11.GL_LINEAR
         minFilter = GL11.GL_LINEAR
+
+        GL11.glMatrixMode(GL11.GL_TEXTURE)
 
         wrapS = GL11.GL_REPEAT
         wrapT = GL11.GL_REPEAT

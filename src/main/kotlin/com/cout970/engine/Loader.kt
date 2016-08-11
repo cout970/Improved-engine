@@ -1,6 +1,6 @@
 package com.cout970.engine
 
-import com.cout970.engine.util.EngineLogger
+import com.cout970.engine.log.EngineLogger
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL
 

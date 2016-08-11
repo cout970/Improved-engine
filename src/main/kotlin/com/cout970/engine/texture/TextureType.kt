@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL13
 /**
  * Created by cout970 on 30/07/2016.
  */
+
 enum class TextureType(
         val glID: Int
 ) {

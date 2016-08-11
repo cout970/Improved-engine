@@ -1,8 +1,6 @@
 package com.cout970.engine.window
 
-import com.cout970.engine.util.math.xi
-import com.cout970.engine.util.math.yi
-import org.joml.Vector2d
+import com.cout970.engine.util.math.Vector2
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryUtil
 
@@ -12,8 +10,8 @@ import org.lwjgl.system.MemoryUtil
 class WindowBuilder {
 
     var title = "Window"
-    var pos: Vector2d? = null
-    var size: Vector2d? = null
+    var pos: Vector2? = null
+    var size: Vector2? = null
 
     fun create(other: Long = MemoryUtil.NULL): IWindow {
 
@@ -31,6 +29,7 @@ class WindowBuilder {
         if (pos != null) {
             window.setPos(pos!!)
         }
+
         return window
     }
 
@@ -40,5 +39,14 @@ class WindowBuilder {
 
     fun setProperty(property: Int, value: Int) {
         glfwWindowHint(property, value)
+    }
+
+    companion object {
+
+        inline fun build(init: WindowBuilder.() -> Unit): IWindow {
+            val builder = WindowBuilder()
+            builder.init()
+            return builder.create()
+        }
     }
 }

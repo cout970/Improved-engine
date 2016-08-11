@@ -1,17 +1,20 @@
 package com.cout970.engine.raytrace
 
-import com.cout970.engine.util.math.copy
-import org.joml.Vector3d
+import com.cout970.engine.util.math.Vector3
 
 /**
  * Created by cout970 on 31/07/2016.
  */
+/**
+ * This class represents the data of a hit between a ray and a IRayObstacle
+ */
 class RayTraceResult(
+        //the ray used to find the IRayObstacle object
         val ray: Ray,
-        private val hit_: Vector3d,
+        //the exact point where the ray hits the IRayObstacle object
+        val hit: Vector3,
+        //the object that collides with the ray
         val target: IRayObstacle
 ) {
-    val hit: Vector3d get() = hit_.copy()
-
     var extraData: Any? = null
 }

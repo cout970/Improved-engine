@@ -1,56 +1,134 @@
 package com.cout970.engine.util.math
 
-import org.joml.AxisAngle4d
-import org.joml.Matrix3d
-import org.joml.Quaterniond
-import org.joml.Vector3d
+import java.io.Serializable
 
 /**
  * Created by cout970 on 26/07/2016.
  */
 
-fun vec3Of(x:Number, y: Number, z: Number) = Vector3d(x.toDouble(), y.toDouble(), z.toDouble())
+/**
+ * A Immutable version of Vector3d
+ */
+data class Vector3(
+        val x: Double,
+        val y: Double,
+        val z: Double
+) : Comparable<Vector3>, Serializable {
 
-fun Vector3d.toRadians() = Vector3d(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z))
+    companion object {
+        val ORIGIN = vec3Of(0, 0, 0)
+        val X_AXIS = vec3Of(1, 0, 0)
+        val Y_AXIS = vec3Of(0, 1, 0)
+        val Z_AXIS = vec3Of(0, 0, 1)
+    }
 
-fun Vector3d.toDegrees() = Vector3d(Math.toDegrees(x), Math.toDegrees(y), Math.toDegrees(z))
+    //basic constructors
+    constructor(value: Double) : this(value, value, value)
 
-fun Vector3d.rotate(angle: Number, x: Number, y: Number, z: Number) = rotate(Quaterniond(AxisAngle4d(angle.toDouble(), x.toDouble(), y.toDouble(), z.toDouble())))
+    constructor(x: Double, y: Double) : this(x, y, 0.0)
 
-fun Vector3d.rotateX(angle: Number) = rotate(Quaterniond(AxisAngle4d(angle.toDouble(), 1.0, 0.0, 0.0)))
+    //float version
+    val xf: Float get() = x.toFloat()
+    val yf: Float get() = y.toFloat()
+    val zf: Float get() = z.toFloat()
 
-fun Vector3d.rotateY(angle: Number) = rotate(Quaterniond(AxisAngle4d(angle.toDouble(), 0.0, 1.0, 0.0)))
+    //int version
+    val xi: Int get() = x.toInt()
+    val yi: Int get() = y.toInt()
+    val zi: Int get() = z.toInt()
 
-fun Vector3d.rotateZ(angle: Number) = rotate(Quaterniond(AxisAngle4d(angle.toDouble(), 0.0, 0.0, 1.0)))
+    //basic math operations
+    operator fun plus(v: Number) = Vector3(x + v.toDouble(), y + v.toDouble(), z + v.toDouble())
+    operator fun minus(v: Number) = Vector3(x - v.toDouble(), y - v.toDouble(), z - v.toDouble())
+    operator fun times(v: Number) = Vector3(x * v.toDouble(), y * v.toDouble(), z * v.toDouble())
+    operator fun div(v: Number) = Vector3(x / v.toDouble(), y / v.toDouble(), z / v.toDouble())
 
-fun Vector3d.floor() = Vector3d(Math.floor(x), Math.floor(y), Math.floor(z))
-fun Vector3d.ceil() = Vector3d(Math.ceil(x), Math.ceil(y), Math.floor(z))
+    operator fun plus(v: Vector3) = Vector3(x + v.x, y + v.y, z + v.z)
+    operator fun minus(v: Vector3) = Vector3(x - v.x, y - v.y, z - v.z)
+    operator fun times(v: Vector3) = Vector3(x * v.x, y * v.y, z * v.z)
+    operator fun div(v: Vector3) = Vector3(x / v.x, y / v.y, z / v.z)
 
-val Vector3d.xf: Float get() = x.toFloat()
-val Vector3d.yf: Float get() = y.toFloat()
-val Vector3d.zf: Float get() = z.toFloat()
+    //utility functions
+    override fun compareTo(other: Vector3): Int =
+            if (x < other.x) -1 else if (x > other.x) 1 else
+                if (y < other.y) -1 else if (y > other.y) 1 else
+                    if (z < other.z) -1 else if (z > other.z) 1 else 0
 
-val Vector3d.xi: Int get() = x.toInt()
-val Vector3d.yi: Int get() = y.toInt()
-val Vector3d.zi: Int get() = z.toInt()
+    /**
+     * Gets a vector with the same values as this but negated
+     */
+    operator fun unaryMinus() = Vector3(-x, -y, -z)
 
-operator fun Vector3d.plus(v: Number) = Vector3d(x + v.toDouble(), y + v.toDouble(), z + v.toDouble())
-operator fun Vector3d.minus(v: Number) = Vector3d(x - v.toDouble(), y - v.toDouble(), z - v.toDouble())
-operator fun Vector3d.times(v: Number) = Vector3d(x * v.toDouble(), y * v.toDouble(), z * v.toDouble())
-operator fun Vector3d.div(v: Number) = Vector3d(x / v.toDouble(), y / v.toDouble(), z / v.toDouble())
+    /**
+     * Gets the length, magnitude or norm of this vector
+     */
+    fun length() = Math.sqrt(lengthSq())
 
-operator fun Vector3d.plus(v: Vector3d) = Vector3d(x + v.x, y + v.y, z + v.z)
-operator fun Vector3d.minus(v: Vector3d) = Vector3d(x - v.x, y - v.y, z - v.z)
-operator fun Vector3d.times(v: Vector3d) = Vector3d(x * v.x, y * v.y, z * v.z)
-operator fun Vector3d.div(v: Vector3d) = Vector3d(x / v.x, y / v.y, z / v.z)
+    /**
+     * Gets the length, magnitude or norm squared of this vector
+     */
+    fun lengthSq() = x * x + y * y + z * z
 
-operator fun Vector3d.unaryMinus() = Vector3d(-x, -y, -z)
+    /**
+     * Gets the normalized version of this vector
+     */
+    fun normalize() = this / length()
 
-fun Vector3d.distance(other: Vector3d) = (other - this).length()
-fun Vector3d.distanceSq(other: Vector3d) = (other - this).lengthSquared()
+    /**
+     * Gets the cross product of this vector and the other vector
+     */
+    fun cross(vec: Vector3) = Vector3(y * vec.z - z * vec.y, z * vec.x - x * vec.z, x * vec.y - y * vec.x)
 
-operator fun Vector3d.times(m: Matrix3d) = mul(m, Vector3d())!!
+    /**
+     * Gets the dot product of this vector and the other vector
+     */
+    fun dot(vec: Vector3) = x * vec.x + y * vec.y + z * vec.z
 
-fun Vector3d.transform(op: (Double) -> Double) = Vector3d(op(x), op(y), op(z))
+    /**
+     * Gets the reflection of this vector on the plane defined by the normal vector
+     */
+    fun reflect(normal: Vector3): Vector3 {
+        val dot2 = dot(normal) * 2
+        return Vector3(x - dot2 * normal.x, y - dot2 * normal.y, z - dot2 * normal.z)
+    }
 
-fun Vector3d.copy() = Vector3d(this)
+    /**
+     * Gets the angle in radians between the vectors
+     */
+    fun angle(vec: Vector3) = Math.acos(angleCos(vec))
+
+    /**
+     * Gets the cosine of the angle between this vector and the other vector
+     */
+    fun angleCos(vec: Vector3): Double {
+        var cos = dot(vec) / Math.sqrt(lengthSq() * vec.lengthSq())
+        cos = if (cos < 1) cos else 1.0
+        cos = if (cos > -1) cos else -1.0
+        return cos
+    }
+
+    /**
+     * Applies the floor function to all the components of this vector
+     */
+    fun floor() = Vector3(Math.floor(x), Math.floor(y), Math.floor(z))
+
+    /**
+     * Applies the ceil function to all the components of this vector
+     */
+    fun ceil() = Vector3(Math.ceil(x), Math.ceil(y), Math.floor(z))
+
+    /**
+     * Gets the distance from this vector to the other vector
+     */
+    fun distance(other: Vector3) = (other - this).length()
+
+    /**
+     * Gets the distance squared from this vector to the other vector
+     */
+    fun distanceSq(other: Vector3) = (other - this).lengthSq()
+
+    /**
+     * Applies a transformation to all the components of this vector
+     */
+    fun transform(op: (Double) -> Double) = Vector3(op(x), op(y), op(z))
+}

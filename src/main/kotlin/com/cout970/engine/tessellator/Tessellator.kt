@@ -1,5 +1,8 @@
 package com.cout970.engine.tessellator
 
+import com.cout970.engine.renderer.IRenderer
+import com.cout970.engine.renderer.IVaoFormat
+import com.cout970.engine.renderer.VaoFormatPTN
 import org.lwjgl.opengl.GL11
 
 /**
@@ -9,7 +12,7 @@ import org.lwjgl.opengl.GL11
 object Tessellator {
 
     var builder: VaoBuilder? = null
-    private var vaoFormat: IVaoFormat = DefaultVaoFormat.INSTANCE
+    private var vaoFormat: IVaoFormat = VaoFormatPTN.INSTANCE
     var vertexIndex = 0
     var vaoCache: VAO? = null
 
@@ -50,9 +53,22 @@ object Tessellator {
         vaoCache = builder!!.build()
     }
 
-    fun draw(renderer: IVaoRenderer){
+    fun drawCache(renderer: IRenderer){
         renderer.render(vaoCache!!)
         vaoCache!!.close()
         vaoCache = null
+    }
+
+    fun compile(drawMode: Int = GL11.GL_TRIANGLES, func: Tessellator.() -> Unit): VAO{
+        startCompilation(drawMode)
+        func()
+        return endCompilation()
+    }
+
+    fun draw(drawMode: Int = GL11.GL_TRIANGLES, renderer: IRenderer, func: Tessellator.() -> Unit){
+        startDrawing(drawMode)
+        func()
+        endDrawing()
+        drawCache(renderer)
     }
 }

@@ -1,10 +1,8 @@
 package com.cout970.engine.window
 
 import com.cout970.engine.util.box.Box2
+import com.cout970.engine.util.math.Vector2
 import com.cout970.engine.util.math.vec2Of
-import com.cout970.engine.util.math.xi
-import com.cout970.engine.util.math.yi
-import org.joml.Vector2d
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback
 import org.lwjgl.glfw.GLFWWindowFocusCallback
@@ -15,11 +13,10 @@ import org.lwjgl.opengl.GL11
  */
 class WindowGLFW(
         override val id: Long,
-        title_: String
+        var title: String
 ) : IWindow {
 
     override var box: Box2 = Box2.IDENTITY
-    var title: String = title_
     var frameBufferCallBack: GLFWFramebufferSizeCallback
     var windowFocusCallback: GLFWWindowFocusCallback
     val sizeListeners = mutableListOf<(Int, Int) -> Unit>()
@@ -48,12 +45,12 @@ class WindowGLFW(
         glfwSetWindowFocusCallback(id, windowFocusCallback)
     }
 
-    override fun setPos(pos: Vector2d) {
+    override fun setPos(pos: Vector2) {
         box = box.copy(pos = pos)
         glfwSetWindowPos(id, pos.xi, pos.yi)
     }
 
-    override fun setSize(size: Vector2d) {
+    override fun setSize(size: Vector2) {
         box = box.copy(size = size)
         glfwSetWindowSize(id, size.xi, size.yi)
     }

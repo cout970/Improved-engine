@@ -2,8 +2,7 @@ package com.cout970.engine.raytrace
 
 import com.cout970.engine.util.Direction
 import com.cout970.engine.util.box.Box3
-import com.cout970.engine.util.math.copy
-import org.joml.Vector3d
+import com.cout970.engine.util.math.Vector3
 
 /**
  * Created by cout970 on 31/07/2016.
@@ -14,8 +13,8 @@ object RayTraceUtil {
     val EPSILON = 1.0000000116860974E-7
 
     fun rayTraceBox3(box: Box3, ray: Ray): RayTraceResult? {
-        var start = ray.getStart()
-        var end = ray.getEnd()
+        var start = ray.start
+        var end = ray.end
         start = start.copy()
         end = end.copy()
 
@@ -50,29 +49,29 @@ object RayTraceUtil {
             maxZ = null
         }
 
-        var result: Vector3d? = null
+        var result: Vector3? = null
 
         if (minX != null) {
             result = minX
         }
 
-        if (maxX != null && (result == null || start.distanceSquared(maxX) < start.distanceSquared(result))) {
+        if (maxX != null && (result == null || start.distanceSq(maxX) < start.distanceSq(result))) {
             result = maxX
         }
 
-        if (minY != null && (result == null || start.distanceSquared(minY) < start.distanceSquared(result))) {
+        if (minY != null && (result == null || start.distanceSq(minY) < start.distanceSq(result))) {
             result = minY
         }
 
-        if (maxY != null && (result == null || start.distanceSquared(maxY) < start.distanceSquared(result))) {
+        if (maxY != null && (result == null || start.distanceSq(maxY) < start.distanceSq(result))) {
             result = maxY
         }
 
-        if (minZ != null && (result == null || start.distanceSquared(minZ) < start.distanceSquared(result))) {
+        if (minZ != null && (result == null || start.distanceSq(minZ) < start.distanceSq(result))) {
             result = minZ
         }
 
-        if (maxZ != null && (result == null || start.distanceSquared(maxZ) < start.distanceSquared(result))) {
+        if (maxZ != null && (result == null || start.distanceSq(maxZ) < start.distanceSq(result))) {
             result = maxZ
         }
 
@@ -109,51 +108,49 @@ object RayTraceUtil {
         }
     }
 
-    private fun isVecInsideYZBounds(point: Vector3d?, box: Box3): Boolean {
+    fun isVecInsideYZBounds(point: Vector3?, box: Box3): Boolean {
         return point != null && point.y >= box.minY && point.y <= box.maxY && point.z >= box.minZ && point.z <= box.maxZ
     }
 
-    private fun isVecInsideXZBounds(point: Vector3d?, box: Box3): Boolean {
+    fun isVecInsideXZBounds(point: Vector3?, box: Box3): Boolean {
         return point != null && point.x >= box.minX && point.x <= box.maxX && point.z >= box.minZ && point.z <= box.maxZ
     }
 
-    private fun isVecInsideXYBounds(point: Vector3d?, box: Box3): Boolean {
+    fun isVecInsideXYBounds(point: Vector3?, box: Box3): Boolean {
         return point != null && point.x >= box.minX && point.x <= box.maxX && point.y >= box.minY && point.y <= box.maxY
     }
 
 
-    private fun getIntermediateWithXValue(start: Vector3d, end: Vector3d, x: Double): Vector3d? {
-
-        val diff = end.copy().sub(start)
+    fun getIntermediateWithXValue(start: Vector3, end: Vector3, x: Double): Vector3? {
+        val diff = end - start
 
         if (diff.x * diff.x < EPSILON) {
             return null
         } else {
             val d3 = (x - start.x) / diff.x
-            return if (d3 >= 0.0 && d3 <= 1.0) start.copy().add(diff.mul(d3)) else null
+            return if (d3 >= 0.0 && d3 <= 1.0) start + (diff * d3) else null
         }
     }
 
-    private fun getIntermediateWithYValue(start: Vector3d, end: Vector3d, y: Double): Vector3d? {
-
-        val diff = end.copy().sub(start)
+    fun getIntermediateWithYValue(start: Vector3, end: Vector3, y: Double): Vector3? {
+        val diff = end - start
 
         if (diff.y * diff.y < EPSILON) {
             return null
         } else {
             val d3 = (y - start.y) / diff.y
-            return if (d3 >= 0.0 && d3 <= 1.0) start.copy().add(diff.mul(d3)) else null
+            return if (d3 >= 0.0 && d3 <= 1.0) start + (diff * d3) else null
         }
     }
 
-    private fun getIntermediateWithZValue(start: Vector3d, end: Vector3d, z: Double): Vector3d? {
-        val diff = end.copy().sub(start)
+    fun getIntermediateWithZValue(start: Vector3, end: Vector3, z: Double): Vector3? {
+        val diff = end - start
 
         if (diff.z * diff.z < EPSILON) {
             return null
         } else {
             val d3 = (z - start.z) / diff.z
-            return if (d3 >= 0.0 && d3 <= 1.0) start.copy().add(diff.mul(d3)) else null
+            return if (d3 >= 0.0 && d3 <= 1.0) start + (diff * d3) else null
         }
     }
 
